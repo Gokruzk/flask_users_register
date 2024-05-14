@@ -8,7 +8,13 @@ database = 'orchestra'
 app.config['MONGO_URI'] = f'mongodb://localhost:27017/{database}'
 mongo = PyMongo(app)
 
-CORS(app, resources={r"/user/*": {"origins": "http://localhost:3000"}})
+
+cors_resources = {
+    r"/user/*": {"origins": "http://localhost:3000"},
+    r"/update_user/*": {"origins": "http://localhost:3000"}
+}
+
+CORS(app, resources=cors_resources)
 
 
 @cross_origin
@@ -65,19 +71,27 @@ def delete_user(id):
             "status": 200
         })
         response.status_code = 200
-    except:
+    except Exception as e:
+        print(e)
         print('An error has occurred while removing the user.')
     return response
 
 
 @cross_origin
-@app.route('/user/<id>', methods=['POST'])
+@app.route('/update_user/<id>', methods=['POST'])
 def update_user(id):
+    username = request.json['username']
+    email = request.json['email']
     response = ''
     try:
-        mongo.db.users.update_one({'_id': ObjectId(id)})
+        mongo.db.users.update_one({"_id": ObjectId(id)},
+                                  {"$set": {
+                                      "username": username,
+                                      "email": email
+                                  }
+        })
         response = jsonify({
-            "message": "User deleted",
+            "message": "User updated",
             "status": 200
         })
         response.status_code = 200
