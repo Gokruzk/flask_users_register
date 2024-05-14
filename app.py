@@ -1,6 +1,6 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_pymongo import PyMongo
-from bson import json_util
+from bson import json_util, ObjectId
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
@@ -40,6 +40,50 @@ def get_users():
     us = mongo.db.users.find()
     response = json_util.dumps(us)
     return Response(response, mimetype='application/json')
+
+
+@cross_origin
+@app.route('/user/<id>', methods=['GET'])
+def get_user(id):
+    response = ''
+    try:
+        us = mongo.db.users.find_one({'_id': ObjectId(id)})
+        response = json_util.dumps(us)
+    except:
+        print('An error has occurred while getting the user.')
+    return response
+
+
+@cross_origin
+@app.route('/user/<id>', methods=['DELETE'])
+def delete_user(id):
+    response = ''
+    try:
+        mongo.db.users.delete_one({'_id': ObjectId(id)})
+        response = jsonify({
+            "message": "User deleted",
+            "status": 200
+        })
+        response.status_code = 200
+    except:
+        print('An error has occurred while removing the user.')
+    return response
+
+
+@cross_origin
+@app.route('/user/<id>', methods=['POST'])
+def update_user(id):
+    response = ''
+    try:
+        mongo.db.users.update_one({'_id': ObjectId(id)})
+        response = jsonify({
+            "message": "User deleted",
+            "status": 200
+        })
+        response.status_code = 200
+    except:
+        print('An error has occurred while removing the user.')
+    return response
 
 
 if __name__ == "__main__":
