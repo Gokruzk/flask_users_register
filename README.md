@@ -8,22 +8,17 @@ Go to mongodb page to download [mongodb community server](https://www.mongodb.co
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the followings modules.
 
-```bash
-> pip install flask
-> pip install pymongo
-> pip install flask_pymongo
+```
+pip install flask pymongo flask_pymongo
 ```
 ## Database
 Use the shell to run mongodb
-```bash
-> mongod
+```
+mongod
 ```
 Use mongosh to create database
-```bash
-> mongosh
-> use ochestra
-> db.createCollection("users")
 ```
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
+mongosh
+use ochestra
+db.createCollection("users")
+```
